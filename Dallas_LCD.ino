@@ -19,7 +19,7 @@ int backLight = 30;    // pin 6 will control the backlight
 float tempC; 
 int on = 9; //On button RF remote
 int off = 8; // off button
-float temp_setpoint = 15.00;    //Temperature Set Point
+float temp_setpoint = 20.00;    //Temperature Set Point
 const int buttonPin = 3;  // Pushbutton for backlight
 int buttonState = 0;         // variable for reading the pushbutton status
 
