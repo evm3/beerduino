@@ -1,7 +1,7 @@
 #include <LiquidCrystal.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include <Timer.h>
+#include <SimpleTimer.h>
 
 // Data wire is plugged into port 7 on the Arduino
 #define ONE_WIRE_BUS 7
@@ -19,7 +19,7 @@ int backLight = 30;    // pin 6 will control the backlight
 float tempC; 
 int on = 9; //On button RF remote
 int off = 8; // off button
-float temp_setpoint = 16.00;    //Temperature Set Point
+float temp_setpoint = 22.00;    //Temperature Set Point
 const int buttonPin = 3;  // Pushbutton for backlight
 int buttonState = 0;         // variable for reading the pushbutton status
 
@@ -27,8 +27,8 @@ const int WAIT_MODE = 0;
 const int TEMP_MODE = 1;
 int state = TEMP_MODE;
 
-Timer timer;
-const long FIVE_MINUTES = 300000;
+SimpleTimer timer;
+const long FIVE_MINUTES = 1000*20;
 
 boolean areWeOn = false;
 
@@ -45,6 +45,7 @@ void setup(void)
     lcd.begin(16, 2);    
     sensors.begin();  
     sensors.setResolution(thermometer, 12);
+    timer.setTimeout(FIVE_MINUTES, timerTask);
 }
 
 void loop(void)
@@ -57,11 +58,16 @@ void loop(void)
         break;       
   }
   
-  timer.update();
+  
   measureTemp();
   updateDisplay();
   checkBackLightButtons();
 }
+
+
+void timerTask() {
+  
+}  
 
 void measureTemp(){
     sensors.requestTemperatures(); // Send the command to get temperatures
@@ -101,7 +107,9 @@ void doTempMode(){
       digitalWrite(on, LOW);
       areWeOn = true;
       state = WAIT_MODE;
-      timer.after(FIVE_MINUTES, switchToTempMode);
+      timer.run();
+      switchToTempMode;
+      
   }  // turn the LED off by making the voltage LOW
  else if((tempC <= temp_setpoint) && (areWeOn == true)) {
       digitalWrite(off, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -109,7 +117,9 @@ void doTempMode(){
       digitalWrite(off, LOW);
       areWeOn = false;
       state = WAIT_MODE;
-      timer.after(FIVE_MINUTES, switchToTempMode);
+      timer.run();
+      switchToTempMode;
+      
  }            
 }
 
