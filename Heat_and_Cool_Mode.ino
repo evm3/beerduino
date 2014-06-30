@@ -32,7 +32,8 @@ int state = TEMP_MODE;
 Timer t;
 const long FIVE_MINUTES = 300000L;
 
-boolean areWeOn = false;
+boolean areWeOnCool = false;
+boolean areWeOnHeat = false;
 
 void setup(void)
 {
@@ -56,10 +57,11 @@ void setup(void)
 void loop(void)
 {   
   switch(state){
-      case WAIT_MODE:        
+      case WAIT_MODE: 
+      doHeatMode();
         break;
       case TEMP_MODE:
-        doTempMode();
+        doCoolMode();
         break;       
   }
   
@@ -92,32 +94,38 @@ void updateDisplay(){
         break;       
   }
   
-  if(areWeOn){
-    lcd.print(" *ON*"); 
+  if(areWeOnCool){
+    lcd.print(" *ONC*"); 
   }else{
-    lcd.print(" *OFF*"); 
+    lcd.print(" *OFFC*"); 
+  }
+  
+   if(areWeOnHeat){
+    lcd.print(" *ONH*"); 
+  }else{
+    lcd.print(" *OFFH*"); 
   }
 }
 
-void doTempMode(){
+void doCoolMode(){
     
-  if ((tempC > temp_setpoint)  && (areWeOn == false)) {
+  if ((tempC > temp_setpoint)  && (areWeOnCool == false)) {
       delay(300);
       digitalWrite(CoolOnPin, HIGH);   // turn the LED on (HIGH is the voltage level)
       delay(300);               // wait for a second
       digitalWrite(CoolOnPin, LOW);
       delay(300);
-      areWeOn = true;
+      areWeOnCool = true;
       state = WAIT_MODE;
       t.after(FIVE_MINUTES, switchToTempMode);
   }  // turn the LED off by making the voltage LOW
- else if((tempC <= temp_setpoint) && (areWeOn == true)) {
+ else if((tempC <= temp_setpoint) && (areWeOnCool == true)) {
       delay(300);
       digitalWrite(CoolOffPin, HIGH);   // turn the LED on (HIGH is the voltage level)
       delay(300);               // wait for a second
       digitalWrite(CoolOffPin, LOW);
       delay(300);
-      areWeOn = false;
+      areWeOnCool = false;
       state = WAIT_MODE;
       t.after(FIVE_MINUTES, switchToTempMode);
  }            
@@ -127,6 +135,23 @@ void switchToTempMode(){
   state = TEMP_MODE;
 }
 
+void doHeatMode (){
+ if ((tempC < temp_setpoint)  && (areWeOnHeat == false)) {
+      delay(300);
+      digitalWrite(HeatOnPin, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(300);               // wait for a second
+      digitalWrite(HeatOnPin, LOW);
+      delay(300);
+      areWeOnHeat = true;
+ } else if ((tempC > temp_setpoint)  && (areWeOnHeat == true)) {
+      delay(300);
+      digitalWrite(CoolOffPin, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(300);               // wait for a second
+      digitalWrite(CoolOffPin, LOW);
+      delay(300);
+      areWeOnHeat = false;
+ }
+}
 void checkBackLightButtons(){
   buttonState = digitalRead(buttonPin);  
   
