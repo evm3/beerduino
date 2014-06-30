@@ -17,8 +17,10 @@ LiquidCrystal lcd(12, 11, 22, 24, 26, 28);
  
 int backLight = 30;    // pin 6 will control the backlight
 float tempC; 
-int on = 9; //On button RF remote
-int off = 8; // off button
+int CoolOnPin = 9; //On button RF remote
+int CoolOffPin = 8; // off button
+int HeatOnPin = 5;
+int HeatOffPin = 4;
 float temp_setpoint = 18.00;    //Temperature Set Point
 const int buttonPin = 3;  // Pushbutton for backlight
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -37,10 +39,14 @@ void setup(void)
     // start serial port
     Serial.begin(9600);
     pinMode(backLight, OUTPUT);
-    pinMode(on, OUTPUT);
-    digitalWrite (on, LOW);
-    pinMode (off, OUTPUT);
-    digitalWrite (off, LOW);
+    pinMode(CoolOnPin, OUTPUT);
+    digitalWrite (CoolOnPin, LOW);
+    pinMode (CoolOffPin, OUTPUT);
+    digitalWrite (CoolOffPin, LOW);
+    pinMode(HeatOnPin, OUTPUT);
+    digitalWrite (HeatOnPin, LOW);
+    pinMode (HeatOffPin, OUTPUT);
+    digitalWrite (HeatOffPin, LOW);
     pinMode (buttonPin, INPUT);
     lcd.begin(16, 2);    
     sensors.begin();  
@@ -97,9 +103,9 @@ void doTempMode(){
     
   if ((tempC > temp_setpoint)  && (areWeOn == false)) {
       delay(300);
-      digitalWrite(on, HIGH);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(CoolOnPin, HIGH);   // turn the LED on (HIGH is the voltage level)
       delay(300);               // wait for a second
-      digitalWrite(on, LOW);
+      digitalWrite(CoolOnPin, LOW);
       delay(300);
       areWeOn = true;
       state = WAIT_MODE;
@@ -107,9 +113,9 @@ void doTempMode(){
   }  // turn the LED off by making the voltage LOW
  else if((tempC <= temp_setpoint) && (areWeOn == true)) {
       delay(300);
-      digitalWrite(off, HIGH);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(CoolOffPin, HIGH);   // turn the LED on (HIGH is the voltage level)
       delay(300);               // wait for a second
-      digitalWrite(off, LOW);
+      digitalWrite(CoolOffPin, LOW);
       delay(300);
       areWeOn = false;
       state = WAIT_MODE;
