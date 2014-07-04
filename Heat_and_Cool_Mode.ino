@@ -15,15 +15,15 @@ DallasTemperature sensors(&oneWire);
 DeviceAddress thermometer = { 0x28, 0xE8, 0xA3, 0x10, 0x05, 0x00, 0x00, 0xE6};
 LiquidCrystal lcd(12, 11, 22, 24, 26, 28);
  
-int backLight = 30;    // pin 6 will control the backlight
+int backLight = 30;    
 float tempC; 
-int CoolOnPin = 9; //On button RF remote
-int CoolOffPin = 8; // off button
+int CoolOnPin = 9; 
+int CoolOffPin = 8; 
 int HeatOnPin = 5;
 int HeatOffPin = 4;
-float temp_setpoint = 19.00;    //Temperature Set Point
-const int buttonPin = 3;  // Pushbutton for backlight
-int buttonState = 0;         // variable for reading the pushbutton status
+float temp_setpoint = 19.00;    
+const int buttonPin = 3; 
+int buttonState = 0;        
 
 const int WAIT_MODE = 0;
 const int TEMP_MODE = 1;
@@ -38,7 +38,7 @@ boolean areWeOnHeat = false;
 
 void setup(void)
 {
-    // start serial port
+    
     Serial.begin(9600);
     pinMode(backLight, OUTPUT);
     pinMode(CoolOnPin, OUTPUT);
@@ -75,7 +75,7 @@ void loop(void)
 }
 
 void measureTemp(){
-    sensors.requestTemperatures(); // Send the command to get temperatures
+    sensors.requestTemperatures(); 
     tempC = sensors.getTempC(thermometer);
 }
 
@@ -104,9 +104,9 @@ void updateDisplay(){
   }
   
    if(areWeOnHeat){
-    lcd.print(" *ONH*"); 
+    lcd.print(" * ONH*"); 
   }else{
-    lcd.print(" *OFFH*"); 
+    lcd.print(" * OFFH*"); 
   }
 }
 
@@ -114,18 +114,18 @@ void doCoolMode(){
     
   if ((tempC > temp_setpoint)  && (areWeOnCool == false)) {
       delay(300);
-      digitalWrite(CoolOnPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(300);               // wait for a second
+      digitalWrite(CoolOnPin, HIGH);   
+      delay(300);               
       digitalWrite(CoolOnPin, LOW);
       delay(300);
       areWeOnCool = true;
       state = WAIT_MODE && HEAT_MODE;
       timer.after(FIVE_MINUTES, switchToTempMode);
-  }  // turn the LED off by making the voltage LOW
+  }  
  else if((tempC <= temp_setpoint) && (areWeOnCool == true)) {
       delay(300);
-      digitalWrite(CoolOffPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(300);               // wait for a second
+      digitalWrite(CoolOffPin, HIGH);   
+      delay(300);             
       digitalWrite(CoolOffPin, LOW);
       delay(300);
       areWeOnCool = false;
@@ -141,15 +141,15 @@ void switchToTempMode(){
 void doHeatMode (){
  if ((tempC < temp_setpoint)  && (areWeOnHeat == false)) {
       delay(300);
-      digitalWrite(HeatOnPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(300);               // wait for a second
+      digitalWrite(HeatOnPin, HIGH);   
+      delay(300);               
       digitalWrite(HeatOnPin, LOW);
       delay(300);
       areWeOnHeat = true;
  } else if ((tempC > temp_setpoint)  && (areWeOnHeat == true)) {
       delay(300);
-      digitalWrite(CoolOffPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(300);               // wait for a second
+      digitalWrite(CoolOffPin, HIGH);   
+      delay(300);               
       digitalWrite(CoolOffPin, LOW);
       delay(300);
       areWeOnHeat = false;
@@ -159,11 +159,11 @@ void checkBackLightButtons(){
   buttonState = digitalRead(buttonPin);  
   
   if (buttonState == HIGH) {     
-    // turn backlight on:    
+       
     digitalWrite(backLight, HIGH);  
   } 
   else {
-    // turn backlight off:
+
     digitalWrite(backLight, LOW); 
   } 
 }
