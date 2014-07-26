@@ -27,7 +27,6 @@ int buttonState = 0;
 
 const int WAIT_MODE = 0;
 const int TEMP_MODE = 1;
-const int HEAT_MODE = 2;
 int state = TEMP_MODE;
 
 Timer timer;
@@ -63,9 +62,7 @@ void loop(void)
       case TEMP_MODE:
         doCoolMode();
         break; 
-      case HEAT_MODE:
-        doHeatMode();
-        break;      
+           
   }
   
   timer.update();
@@ -119,7 +116,7 @@ void doCoolMode(){
       digitalWrite(CoolOnPin, LOW);
       delay(300);
       areWeOnCool = true;
-      state = WAIT_MODE && HEAT_MODE;
+      state = WAIT_MODE;
       timer.after(FIVE_MINUTES, switchToTempMode);
   }  
  else if((tempC <= temp_setpoint) && (areWeOnCool == true)) {
@@ -129,23 +126,17 @@ void doCoolMode(){
       digitalWrite(CoolOffPin, LOW);
       delay(300);
       areWeOnCool = false;
-      state = WAIT_MODE && HEAT_MODE;
+      state = WAIT_MODE;
       timer.after(FIVE_MINUTES, switchToTempMode);
- }            
-}
-
-void switchToTempMode(){
-  state = TEMP_MODE && HEAT_MODE;
-}
-
-void doHeatMode (){
- if ((tempC < temp_setpoint)  && (areWeOnHeat == false)) {
+ }
+else if ((tempC < temp_setpoint)  && (areWeOnHeat == false)) {
       delay(300);
       digitalWrite(HeatOnPin, HIGH);   
       delay(300);               
       digitalWrite(HeatOnPin, LOW);
       delay(300);
       areWeOnHeat = true;
+      
  } else if ((tempC > temp_setpoint)  && (areWeOnHeat == true)) {
       delay(300);
       digitalWrite(CoolOffPin, HIGH);   
@@ -155,6 +146,11 @@ void doHeatMode (){
       areWeOnHeat = false;
  }
 }
+
+void switchToTempMode(){
+  state = TEMP_MODE;
+}
+
 void checkBackLightButtons(){
   buttonState = digitalRead(buttonPin);  
   
